@@ -6,11 +6,6 @@
     color: #c0392b;
     font-weight: bold;
   }
-
-  .modal-header {
-    background-color: #27ae60;
-    color: white;
-  }
 </style>
 <div class="container py-4">
   <h1 class="text-center mb-4">Agrar-Dashboard</h1>
@@ -180,37 +175,4 @@
     </div>
   </div>
 </div>
-
-<!-- Crop Modal -->
-<div
-  class="modal fade"
-  id="cropModal"
-  tabindex="-1"
-  aria-labelledby="cropModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="cropModalLabel">Detailinformationen</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Parameter</th>
-              <th>Wert</th>
-            </tr>
-          </thead>
-          <tbody id="modalCropDetails">
-            <!-- Dynamisch gefüllt -->
-          </tbody>
-        </table>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
-      </div>
-    </div>
-  </div>
-</div>
+<app-crop-modal />
