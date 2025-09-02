@@ -16,11 +16,6 @@
     cursor: pointer;
   }
 
-  .chart-container {
-    position: relative;
-    height: 300px;
-    margin-bottom: 20px;
-  }
   .modal-header {
     background-color: #27ae60;
     color: white;
@@ -119,15 +114,7 @@
 
   <app-cultivated-plants />
 
-  <!-- Ernteinformationen Chart -->
-  <div class="card shadow-sm mb-4">
-    <div class="card-body">
-      <h5 class="card-title section-title mb-3">Ernteplanung - Erwartete Erträge</h5>
-      <div class="chart-container">
-        <canvas id="harvestChart"></canvas>
-      </div>
-    </div>
-  </div>
+  <app-harvest-information />
 
   <!-- Lagerbedingungen für Feldfrüchte (bereits vorhanden) -->
   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
