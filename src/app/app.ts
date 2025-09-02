@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { SearchingCities } from './features/searching-cities/searching-cities';
 import { Location } from './features/location/location';
 import { WeatherForecast } from './features/weather-forecast/weather-forecast';
-import { CultivatedPlants } from "./features/cultivated-plants/cultivated-plants";
+import { CultivatedPlants } from './features/cultivated-plants/cultivated-plants';
 
 @Component({
   selector: 'app-root',
