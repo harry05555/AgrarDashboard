@@ -1,0 +1,29 @@
+<!-- Ortssuche -->
+<div class="row mb-4">
+  <div class="col-md-8 mx-auto">
+    <div class="location-search">
+      <div class="input-group">
+        <span class="input-group-text"><i class="fas fa-search"></i></span>
+        <input
+          type="text"
+          id="locationSearch"
+          class="form-control"
+          placeholder="Ort eingeben (z.B. München, Berlin, Hamburg...)"
+        />
+        <button class="btn btn-success" type="button" id="searchButton">Suchen</button>
+      </div>
+      <div class="form-text mt-2">
+        Geben Sie einen Ort ein, um Wetterdaten für diese Location zu erhalten
+      </div>
+
+      <div class="saved-locations mt-3">
+        <h6><i class="fas fa-history"></i> Zuletzt gesuchte Orte:</h6>
+        <div id="recentLocations">
+          <div class="location-item" data-location="München">München</div>
+          <div class="location-item" data-location="Hamburg">Hamburg</div>
+          <div class="location-item" data-location="Köln">Köln</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

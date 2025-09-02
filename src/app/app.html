@@ -1,28 +1,4 @@
 <style>
-  .location-search {
-    background-color: white;
-    border-radius: 30px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    margin-bottom: 20px;
-  }
-  .saved-locations {
-    background-color: white;
-    border-radius: 10px;
-    padding: 15px;
-    margin-top: 20px;
-  }
-  .location-item {
-    padding: 8px 12px;
-    border-radius: 5px;
-    margin-bottom: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  .location-item:hover {
-    background-color: #f8f9fa;
-  }
-
   .card-icon {
     width: 50px;
     height: 50px;
@@ -85,35 +61,7 @@
 <div class="container py-4">
   <h1 class="text-center mb-4">Agrar-Dashboard</h1>
 
-  <!-- Ortssuche -->
-  <div class="row mb-4">
-    <div class="col-md-8 mx-auto">
-      <div class="location-search">
-        <div class="input-group">
-          <span class="input-group-text"><i class="fas fa-search"></i></span>
-          <input
-            type="text"
-            id="locationSearch"
-            class="form-control"
-            placeholder="Ort eingeben (z.B. München, Berlin, Hamburg...)"
-          />
-          <button class="btn btn-success" type="button" id="searchButton">Suchen</button>
-        </div>
-        <div class="form-text mt-2">
-          Geben Sie einen Ort ein, um Wetterdaten für diese Location zu erhalten
-        </div>
-
-        <div class="saved-locations mt-3">
-          <h6><i class="fas fa-history"></i> Zuletzt gesuchte Orte:</h6>
-          <div id="recentLocations">
-            <div class="location-item" data-location="München">München</div>
-            <div class="location-item" data-location="Hamburg">Hamburg</div>
-            <div class="location-item" data-location="Köln">Köln</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<app-searching-cities/>
 
   <!-- Aktueller Standort -->
   <div class="alert alert-info d-flex align-items-center" role="alert">
