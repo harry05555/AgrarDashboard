@@ -16,3 +16,7 @@
   background-color: #e74c3c;
   color: white;
 }
+.crop-table tbody tr:hover {
+  background-color: rgba(39, 174, 96, 0.1);
+  cursor: pointer;
+}
