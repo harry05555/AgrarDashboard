@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <title>Agrar-Dashboard</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  </head>
+  <body>
+    <app-root></app-root>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Daten für die Charts
+    const precipitationData = {
+      labels: ['01.09', '02.09', '03.09', '04.09', '05.09', '06.09', '07.09'],
+      datasets: [
+        {
+          label: 'Niederschlagswahrscheinlichkeit (%)',
+          data: [20, 30, 10, 50, 15, 5, 40],
+          borderColor: '#3498db',
+          backgroundColor: 'rgba(52, 152, 219, 0.1)',
+          tension: 0.4,
+          fill: true,
+        },
+      ],
+    };
+
+    const harvestData = {
+      labels: ['Weizen', 'Mais', 'Raps', 'Gerste', 'Kartoffeln', 'Zuckerrüben', 'Sonnenblumen'],
+      datasets: [
+        {
+          label: 'Erwarteter Ertrag (dt/ha)',
+          data: [85, 110, 40, 75, 450, 750, 35],
+          backgroundColor: [
+            'rgba(52, 152, 219, 0.7)',
+            'rgba(46, 204, 113, 0.7)',
+            'rgba(155, 89, 182, 0.7)',
+            'rgba(241, 196, 15, 0.7)',
+            'rgba(230, 126, 34, 0.7)',
+            'rgba(231, 76, 60, 0.7)',
+            'rgba(149, 165, 166, 0.7)',
+          ],
+          borderColor: [
+            'rgb(52, 152, 219)',
+            'rgb(46, 204, 113)',
+            'rgb(155, 89, 182)',
+            'rgb(241, 196, 15)',
+            'rgb(230, 126, 34)',
+            'rgb(231, 76, 60)',
+            'rgb(149, 165, 166)',
+          ],
+          borderWidth: 1,
+        },
+      ],
+    };
+
+    // Chart Konfigurationen
+    const precipConfig = {
+      type: 'line',
+      data: precipitationData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Niederschlagswahrscheinlichkeit der nächsten 7 Tage',
+          },
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                return `Niederschlag: ${context.raw}%`;
+              },
+            },
+          },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: {
+              callback: function (value) {
+                return value + '%';
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const harvestConfig = {
+      type: 'bar',
+      data: harvestData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Erwartete Erträge nach Kultur',
+          },
+          legend: {
+            display: false,
+          },
+        },
+      },
+    };
+
+    // Charts initialisieren
+    window.onload = function () {
+      const precipChart = new Chart(document.getElementById('precipitationChart'), precipConfig);
+
+      const harvestChart = new Chart(document.getElementById('harvestChart'), harvestConfig);
+
+      // Karte initialisieren
+      initMap();
+
+      // Modal-Event-Listener hinzufügen
+      const cropModal = document.getElementById('cropModal');
+      cropModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const crop = button.getAttribute('data-crop');
+        const modalTitle = cropModal.querySelector('.modal-title');
+        modalTitle.textContent = `Detailinformationen - ${crop}`;
+
+        // Daten für das ausgewählte Produkt füllen
+        fillCropDetails(crop);
+      });
+    };
+
+    // Karte initialisieren
+    function initMap() {
+      // Zentrum der Karte auf einen fiktiven Bauernhof in Deutschland setzen
+      const map = L.map('map').setView([51.1657, 10.4515], 7);
+
+      // OpenStreetMap-Tile-Layer hinzufügen
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map);
+
+      // Fiktive Felder hinzufügen
+      const fields = [
+        {
+          id: 'F-101',
+          latlng: [51.1, 10.4],
+          crop: 'Weizen',
+          maturity: 'high',
+        },
+        {
+          id: 'F-102',
+          latlng: [51.2, 10.5],
+          crop: 'Mais',
+          maturity: 'medium',
+        },
+        { id: 'F-103', latlng: [51.3, 10.3], crop: 'Raps', maturity: 'high' },
+        {
+          id: 'F-104',
+          latlng: [51.0, 10.6],
+          crop: 'Gerste',
+          maturity: 'low',
+        },
+        {
+          id: 'F-105',
+          latlng: [51.2, 10.2],
+          crop: 'Kartoffeln',
+          maturity: 'medium',
+        },
+        {
+          id: 'F-106',
+          latlng: [51.4, 10.4],
+          crop: 'Zuckerrüben',
+          maturity: 'high',
+        },
+        {
+          id: 'F-107',
+          latlng: [51.1, 10.7],
+          crop: 'Sonnenblumen',
+          maturity: 'medium',
+        },
+      ];
+
+      // Farben für den Reifegrad
+      const maturityColors = {
+        high: '#2ecc71',
+        medium: '#f39c12',
+        low: '#e74c3c',
+      };
+
+      // Marker für jedes Feld hinzufügen
+      fields.forEach((field) => {
+        const marker = L.circleMarker(field.latlng, {
+          color: maturityColors[field.maturity],
+          fillColor: maturityColors[field.maturity],
+          fillOpacity: 0.7,
+          radius: 8,
+        }).addTo(map);
+
+        // Popup mit Feldinformationen hinzufügen
+        marker.bindPopup(`
+                    <b>Feld ${field.id}</b><br>
+                    Kultur: ${field.crop}<br>
+                    Reifegrad: ${getMaturityText(field.maturity)}<br>
+                    <button class="btn btn-sm btn-primary mt-2" onclick="showCropDetails('${
+                      field.crop
+                    }')">Details anzeigen</button>
+                `);
+      });
+    }
+
+    function getMaturityText(maturity) {
+      switch (maturity) {
+        case 'high':
+          return 'Hoch';
+        case 'medium':
+          return 'Mittel';
+        case 'low':
+          return 'Niedrig';
+        default:
+          return 'Unbekannt';
+      }
+    }
+
+    function showCropDetails(crop) {
+      console.log('sadad' + document.getElementById('cropModal'));
+
+      // Modal mit den Details der ausgewählten Feldfrucht anzeigen
+      const modal = new bootstrap.Modal(document.getElementById('cropModal'));
+      const modalTitle = document.getElementById('cropModalLabel');
+      modalTitle.textContent = `Detailinformationen - ${crop}`;
+
+      // Daten für das ausgewählte Produkt füllen
+      fillCropDetails(crop);
+
+      // Modal anzeigen
+      modal.show();
+    }
+
+    function fillCropDetails(crop) {
+      // Daten für die verschiedenen Feldfrüchte
+      const cropData = {
+        Weizen: {
+          Lagerfeuchte: '≤ 60 %',
+          'Optimale Temperatur': '22°C – 26°C',
+          Hinweise: 'Unter 18% Kornfeuchte, sonst Gefahr von Lager- und Qualitätsverlusten',
+        },
+        Mais: {
+          Lagerfeuchte: '≤ 20 %',
+          'Optimale Temperatur': '15°C – 30°C',
+          Hinweise: 'Bei zu hoher Luftfeuchte steigt Schimmelrisiko',
+        },
+        Raps: {
+          Lagerfeuchte: '≤ 40 %',
+          'Optimale Temperatur': '20°C – 25°C',
+          Hinweise: 'Sehr empfindlich, zu feucht = Auswuchsgefahr',
+        },
+        Gerste: {
+          Lagerfeuchte: '≤ 17 %',
+          'Optimale Temperatur': '18°C – 24°C',
+          Hinweise: 'Malzqualität leidet bei zu hoher Feuchtigkeit',
+        },
+        Kartoffeln: {
+          Lagerfeuchte: '≤ 75 % (Feldluftfeuchte)',
+          'Optimale Temperatur': '10°C – 18°C',
+          Hinweise: 'Schalenfestigkeit wichtig, zu heiß = Fäulnisrisiko',
+        },
+        Zuckerrüben: {
+          Lagerfeuchte: '≤ 80 % (Feldluftfeuchte)',
+          'Optimale Temperatur': '8°C – 15°C',
+          Hinweise: 'Müssen kühl geerntet werden, sonst Lagerverluste',
+        },
+        Sonnenblumen: {
+          Lagerfeuchte: '≤ 15 %',
+          'Optimale Temperatur': '22°C – 28°C',
+          Hinweise: 'Ölqualität sinkt bei zu hoher Kornfeuchte',
+        },
+      };
+
+      // Tabellenkörper auswählen
+      const detailsBody = document.getElementById('modalCropDetails');
+      detailsBody.innerHTML = '';
+
+      // Daten in die Tabelle einfügen
+      for (const [key, value] of Object.entries(cropData[crop])) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+                    <td>${key}</td>
+                    <td>${value}</td>
+                `;
+        detailsBody.appendChild(row);
+      }
+    }
+  </script>
+</html>

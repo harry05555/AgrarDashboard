@@ -1,0 +1,739 @@
+<style>
+  .location-search {
+    background-color: white;
+    border-radius: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  .saved-locations {
+    background-color: white;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 20px;
+  }
+  .location-item {
+    padding: 8px 12px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .location-item:hover {
+    background-color: #f8f9fa;
+  }
+
+  .card-icon {
+    width: 50px;
+    height: 50px;
+  }
+  .section-title {
+    color: #27ae60;
+    font-weight: bold;
+  }
+  .card-title {
+    color: #27ae60;
+  }
+  .risk {
+    color: #c0392b;
+    font-weight: bold;
+  }
+  .nav-tabs .nav-link.active {
+    background-color: #27ae60;
+    color: white;
+    border: 1px solid #27ae60;
+  }
+  .nav-tabs .nav-link {
+    color: #2c3e50;
+  }
+  #map {
+    height: 400px;
+    border-radius: 8px;
+  }
+  .crop-table tbody tr:hover {
+    background-color: rgba(39, 174, 96, 0.1);
+    cursor: pointer;
+  }
+  .maturity-badge {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: bold;
+  }
+  .maturity-high {
+    background-color: #2ecc71;
+    color: white;
+  }
+  .maturity-medium {
+    background-color: #f39c12;
+    color: white;
+  }
+  .maturity-low {
+    background-color: #e74c3c;
+    color: white;
+  }
+  .chart-container {
+    position: relative;
+    height: 300px;
+    margin-bottom: 20px;
+  }
+  .modal-header {
+    background-color: #27ae60;
+    color: white;
+  }
+</style>
+<div class="container py-4">
+  <h1 class="text-center mb-4">Agrar-Dashboard</h1>
+
+  <!-- Ortssuche -->
+  <div class="row mb-4">
+    <div class="col-md-8 mx-auto">
+      <div class="location-search">
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-search"></i></span>
+          <input
+            type="text"
+            id="locationSearch"
+            class="form-control"
+            placeholder="Ort eingeben (z.B. München, Berlin, Hamburg...)"
+          />
+          <button class="btn btn-success" type="button" id="searchButton">Suchen</button>
+        </div>
+        <div class="form-text mt-2">
+          Geben Sie einen Ort ein, um Wetterdaten für diese Location zu erhalten
+        </div>
+
+        <div class="saved-locations mt-3">
+          <h6><i class="fas fa-history"></i> Zuletzt gesuchte Orte:</h6>
+          <div id="recentLocations">
+            <div class="location-item" data-location="München">München</div>
+            <div class="location-item" data-location="Hamburg">Hamburg</div>
+            <div class="location-item" data-location="Köln">Köln</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Aktueller Standort -->
+  <div class="alert alert-info d-flex align-items-center" role="alert">
+    <i class="fas fa-map-marker-alt me-2"></i>
+    <div>Aktueller Standort: <span id="currentLocation">München</span></div>
+  </div>
+
+  <!-- Aktuelles Wetter & Morgen -->
+  <div class="row mb-4">
+    <div class="col-md-6 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title section-title">Wetter Heute</h5>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Temperatur: <span>22°C</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Niederschlag: <span>2 mm</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Regenwahrscheinlichkeit: <span>30%</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Luftfeuchtigkeit: <span>65%</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Status:
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/1163/1163661.png"
+                alt="Sonne"
+                class="card-icon"
+              />
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title section-title">Wetter Morgen</h5>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Temperatur: <span>24°C</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Niederschlag: <span>5 mm</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Regenwahrscheinlichkeit: <span>50%</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Luftfeuchtigkeit: <span>70%</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Status:
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/1163/1163624.png"
+                alt="Regenwolke"
+                class="card-icon"
+              />
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Niederschlagswahrscheinlichkeit Chart -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="card-title section-title mb-3">
+        Niederschlagswahrscheinlichkeit der nächsten 7 Tage
+      </h5>
+      <div class="chart-container">
+        <canvas id="precipitationChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7-Tage Wetter als Tabs -->
+  <div class="card shadow-sm mb-5">
+    <div class="card-body">
+      <h5 class="card-title section-title mb-3">7-Tage Wettervorhersage</h5>
+
+      <!-- Tabs -->
+      <ul class="nav nav-tabs mb-3" id="weatherTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="day1-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#day1"
+            type="button"
+            role="tab"
+          >
+            01.09
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="day2-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#day2"
+            type="button"
+            role="tab"
+          >
+            02.09
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="day3-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#day3"
+            type="button"
+            role="tab"
+          >
+            03.09
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="day4-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#day4"
+            type="button"
+            role="tab"
+          >
+            04.09
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="day5-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#day5"
+            type="button"
+            role="tab"
+          >
+            05.09
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="day6-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#day6"
+            type="button"
+            role="tab"
+          >
+            06.09
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="day7-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#day7"
+            type="button"
+            role="tab"
+          >
+            07.09
+          </button>
+        </li>
+      </ul>
+
+      <!-- Tab Content -->
+      <div class="tab-content" id="weatherTabContent">
+        <!-- Day 1 -->
+        <div class="tab-pane fade show active" id="day1" role="tabpanel">
+          <p>Temperatur: 22°C</p>
+          <p>Regenwahrscheinlichkeit: 20%</p>
+          <p>
+            Status:
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/1163/1163661.png"
+              class="card-icon"
+              alt="Sonne"
+            />
+          </p>
+        </div>
+        <!-- Day 2 -->
+        <div class="tab-pane fade" id="day2" role="tabpanel">
+          <p>Temperatur: 23°C</p>
+          <p>Regenwahrscheinlichkeit: 30%</p>
+          <p>
+            Status:
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/1163/1163624.png"
+              class="card-icon"
+              alt="Regen"
+            />
+          </p>
+        </div>
+        <!-- Day 3 -->
+        <div class="tab-pane fade" id="day3" role="tabpanel">
+          <p>Temperatur: 21°C</p>
+          <p>Regenwahrscheinlichkeit: 10%</p>
+          <p>
+            Status:
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/1163/1163661.png"
+              class="card-icon"
+              alt="Sonne"
+            />
+          </p>
+        </div>
+        <!-- Day 4 -->
+        <div class="tab-pane fade" id="day4" role="tabpanel">
+          <p>Temperatur: 20°C</p>
+          <p>Regenwahrscheinlichkeit: 50%</p>
+          <p>
+            Status:
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/1163/1163624.png"
+              class="card-icon"
+              alt="Regen"
+            />
+          </p>
+        </div>
+        <!-- Day 5 -->
+        <div class="tab-pane fade" id="day5" role="tabpanel">
+          <p>Temperatur: 24°C</p>
+          <p>Regenwahrscheinlichkeit: 15%</p>
+          <p>
+            Status:
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/1163/1163661.png"
+              class="card-icon"
+              alt="Sonne"
+            />
+          </p>
+        </div>
+        <!-- Day 6 -->
+        <div class="tab-pane fade" id="day6" role="tabpanel">
+          <p>Temperatur: 25°C</p>
+          <p>Regenwahrscheinlichkeit: 5%</p>
+          <p>
+            Status:
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/1163/1163661.png"
+              class="card-icon"
+              alt="Sonne"
+            />
+          </p>
+        </div>
+        <!-- Day 7 -->
+        <div class="tab-pane fade" id="day7" role="tabpanel">
+          <p>Temperatur: 22°C</p>
+          <p>Regenwahrscheinlichkeit: 40%</p>
+          <p>
+            Status:
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/1163/1163624.png"
+              class="card-icon"
+              alt="Regen"
+            />
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interaktive Karte -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="card-title section-title mb-3">Interaktive Getreideflächenkarte</h5>
+      <div id="map"></div>
+    </div>
+  </div>
+
+  <!-- Übersicht angebauter Pflanzen -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="card-title section-title mb-3">Übersicht der angebauten Pflanzen</h5>
+      <div class="table-responsive mb-5">
+        <table class="table table-striped table-hover crop-table">
+          <thead>
+            <tr>
+              <th>Feldnummer</th>
+              <th>Kultur</th>
+              <th>Fläche (ha)</th>
+              <th>Reifegrad</th>
+              <th>Aussaattermin</th>
+              <th>Empfohlener Erntezeitpunkt</th>
+              <th>Bedingungen</th>
+              <th>Erwartete Ernte</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-bs-toggle="modal" data-bs-target="#cropModal" data-crop="Weizen">
+              <td>F-101</td>
+              <td>Weizen</td>
+              <td>12.5</td>
+              <td>
+                <span class="maturity-badge maturity-high">Hoch</span>
+              </td>
+              <td>15.03.2023</td>
+              <td>15.09.2023</td>
+              <td>
+                <span class="maturity-badge maturity-high">Optimal</span>
+              </td>
+              <td>85 dt/ha</td>
+            </tr>
+            <tr data-bs-toggle="modal" data-bs-target="#cropModal" data-crop="Mais">
+              <td>F-102</td>
+              <td>Mais</td>
+              <td>8.3</td>
+              <td>
+                <span class="maturity-badge maturity-medium">Mittel</span>
+              </td>
+              <td>25.04.2023</td>
+              <td>25.09.2023</td>
+              <td>
+                <span class="maturity-badge maturity-medium">Warten</span>
+              </td>
+              <td>110 dt/ha</td>
+            </tr>
+            <tr data-bs-toggle="modal" data-bs-target="#cropModal" data-crop="Raps">
+              <td>F-103</td>
+              <td>Raps</td>
+              <td>5.7</td>
+              <td>
+                <span class="maturity-badge maturity-high">Hoch</span>
+              </td>
+              <td>20.08.2022</td>
+              <td>10.09.2023</td>
+              <td>
+                <span class="maturity-badge maturity-medium">Warten</span>
+              </td>
+              <td>40 dt/ha</td>
+            </tr>
+            <tr data-bs-toggle="modal" data-bs-target="#cropModal" data-crop="Gerste">
+              <td>F-104</td>
+              <td>Gerste</td>
+              <td>9.8</td>
+              <td>
+                <span class="maturity-badge maturity-low">Niedrig</span>
+              </td>
+              <td>10.03.2023</td>
+              <td>05.10.2023</td>
+              <td>
+                <span class="maturity-badge maturity-low">keine</span>
+              </td>
+              <td>75 dt/ha</td>
+            </tr>
+            <tr data-bs-toggle="modal" data-bs-target="#cropModal" data-crop="Kartoffeln">
+              <td>F-105</td>
+              <td>Kartoffeln</td>
+              <td>6.2</td>
+              <td>
+                <span class="maturity-badge maturity-medium">Mittel</span>
+              </td>
+              <td>15.04.2023</td>
+              <td>20.09.2023</td>
+              <td>
+                <span class="maturity-badge maturity-low">keine</span>
+              </td>
+              <td>450 dt/ha</td>
+            </tr>
+            <tr data-bs-toggle="modal" data-bs-target="#cropModal" data-crop="Zuckerrüben">
+              <td>F-106</td>
+              <td>Zuckerrüben</td>
+              <td>7.5</td>
+              <td>
+                <span class="maturity-badge maturity-medium">Mittel</span>
+              </td>
+              <td>05.04.2023</td>
+              <td>20.09.2023</td>
+              <td>
+                <span class="maturity-badge maturity-low">keine</span>
+              </td>
+              <td>750 dt/ha</td>
+            </tr>
+            <tr data-bs-toggle="modal" data-bs-target="#cropModal" data-crop="Sonnenblumen">
+              <td>F-107</td>
+              <td>Sonnenblumen</td>
+              <td>4.2</td>
+              <td>
+                <span class="maturity-badge maturity-low">Niedrig</span>
+              </td>
+              <td>15.05.2023</td>
+              <td>20.09.2023</td>
+              <td>
+                <span class="maturity-badge maturity-low">keine</span>
+              </td>
+              <td>35 dt/ha</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <form id="fieldForm">
+        <div class="row g-3 mb-3">
+          <div class="col-md-1">
+            <label for="cropName" class="form-label">Feldnummer</label>
+            <input
+              type="text"
+              class="form-control"
+              id="cropName"
+              placeholder="z.B. Feldnummer"
+              required
+            />
+          </div>
+
+          <div class="col-md-2">
+            <label for="cropName" class="form-label">Feldfrucht</label>
+            <input
+              type="text"
+              class="form-control"
+              id="cropName"
+              placeholder="z.B. Weizen"
+              required
+            />
+          </div>
+
+          <div class="col-md-2">
+            <label for="moisture" class="form-label">Max. Lagerfeuchte (%)</label>
+            <input
+              type="number"
+              class="form-control"
+              id="moisture"
+              min="0"
+              max="100"
+              placeholder="z.B. 60"
+              required
+            />
+          </div>
+          <div class="col-md-2">
+            <label for="tempMin" class="form-label">Min. Temp (°C)</label>
+            <input type="number" class="form-control" id="tempMin" placeholder="z.B. 22" required />
+          </div>
+          <div class="col-md-2">
+            <label for="tempMax" class="form-label">Max. Temp (°C)</label>
+            <input type="number" class="form-control" id="tempMax" placeholder="z.B. 26" required />
+          </div>
+
+          <div class="col-md-2">
+            <label for="cropName" class="form-label">Aussaattermin</label>
+            <input
+              type="text"
+              class="form-control"
+              id="cropName"
+              placeholder="z.B. Aussaattermin"
+              required
+            />
+          </div>
+
+          <div class="col-md-2">
+            <label for="cropName" class="form-label">Wachstumsdauer </label>
+            <input
+              type="text"
+              class="form-control"
+              id="cropName"
+              placeholder="z.B. Aussaattermin"
+              required
+            />
+          </div>
+
+          <div class="col-md-2">
+            <label for="notes" class="form-label">Erwartete Ernte</label>
+            <input type="text" class="form-control" id="notes" placeholder="z.B Erwartete Ernte" />
+          </div>
+
+          <div class="col-md-2">
+            <label for="notes" class="form-label">Hinweise</label>
+            <input
+              type="text"
+              class="form-control"
+              id="notes"
+              placeholder="z.B. Gefahr von Qualitätsverlusten"
+            />
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3"></div>
+
+        <button type="submit" class="btn btn-success">Daten hinzufügen</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Ernteinformationen Chart -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="card-title section-title mb-3">Ernteplanung - Erwartete Erträge</h5>
+      <div class="chart-container">
+        <canvas id="harvestChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lagerbedingungen für Feldfrüchte (bereits vorhanden) -->
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <!-- Weizen -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Weizen</h5>
+          <p>Lagerfeuchte: ≤ 60 %</p>
+          <p>Temperatur: 22 °C – 26 °C</p>
+          <p class="risk">
+            Risiko: Unter 18 % Kornfeuchte, sonst Gefahr von Lager- und Qualitätsverlusten
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mais -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Mais</h5>
+          <p>Lagerfeuchte: ≤ 20 %</p>
+          <p>Temperatur: 15 °C – 30 °C</p>
+          <p class="risk">Risiko: Bei zu hoher Luftfeuchte steigt Schimmelrisiko</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Raps -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Raps</h5>
+          <p>Lagerfeuchte: ≤ 40 %</p>
+          <p>Temperatur: 20 °C – 25 °C</p>
+          <p class="risk">Risiko: Sehr empfindlich, zu feucht = Auswuchsgefahr</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gerste -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Gerste</h5>
+          <p>Lagerfeuchte: ≤ 17 %</p>
+          <p>Temperatur: 18 °C – 24 °C</p>
+          <p class="risk">Risiko: Malzqualität leidet bei zu hoher Feuchtigkeit</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kartoffeln -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Kartoffeln</h5>
+          <p>Lagerfeuchte: ≤ 75 % (Feldluftfeuchte)</p>
+          <p>Temperatur: 10 °C – 18 °C</p>
+          <p class="risk">Risiko: Schalenfestigkeit wichtig, zu heiß = Fäulnisrisiko</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Zuckerrüben -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Zuckerrüben</h5>
+          <p>Lagerfeuchte: ≤ 80 % (Feldluftfeuchte)</p>
+          <p>Temperatur: 8 °C – 15 °C</p>
+          <p class="risk">Risiko: Müssen kühl geerntet werden, sonst Lagerverluste</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sonnenblumen -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Sonnenblumen</h5>
+          <p>Lagerfeuchte: ≤ 15 %</p>
+          <p>Temperatur: 22 °C – 28 °C</p>
+          <p class="risk">Risiko: Ölqualität sinkt bei zu hoher Kornfeuchte</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Crop Modal -->
+<div
+  class="modal fade"
+  id="cropModal"
+  tabindex="-1"
+  aria-labelledby="cropModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cropModalLabel">Detailinformationen</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Wert</th>
+            </tr>
+          </thead>
+          <tbody id="modalCropDetails">
+            <!-- Dynamisch gefüllt -->
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
+      </div>
+    </div>
+  </div>
+</div>
