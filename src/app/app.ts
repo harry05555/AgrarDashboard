@@ -4,10 +4,18 @@ import { Location } from './features/location/location';
 import { WeatherForecast } from './features/weather-forecast/weather-forecast';
 import { CultivatedPlants } from './features/cultivated-plants/cultivated-plants';
 import { HarvestInformation } from './features/harvest-information/harvest-information';
+import { Precipitation } from './features/precipitation/precipitation';
 
 @Component({
   selector: 'app-root',
-  imports: [SearchingCities, Location, WeatherForecast, CultivatedPlants, HarvestInformation],
+  imports: [
+    SearchingCities,
+    Location,
+    WeatherForecast,
+    CultivatedPlants,
+    HarvestInformation,
+    Precipitation,
+  ],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
