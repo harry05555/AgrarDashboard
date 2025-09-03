@@ -7,6 +7,8 @@ import { HarvestInformation } from './features/harvest-information/harvest-infor
 import { Precipitation } from './features/precipitation/precipitation';
 import { GrainFieldMap } from './features/grain-field-map/grain-field-map';
 import { CropModal } from './features/crop-modal/crop-modal';
+import { WeatherNow } from './features/weather-now/weather-now';
+import { WeatherTomorrow } from './features/weather-tomorrow/weather-tomorrow';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +21,8 @@ import { CropModal } from './features/crop-modal/crop-modal';
     Precipitation,
     GrainFieldMap,
     CropModal,
+    WeatherNow,
+    WeatherTomorrow,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
