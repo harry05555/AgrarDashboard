@@ -2,16 +2,19 @@
 <div class="row mb-4">
   <div class="col-md-8 mx-auto">
     <div class="location-search">
-      <div class="input-group">
+      <form class="input-group" (ngSubmit)="onSubmit()" #form="ngForm">
         <span class="input-group-text"><span class="fas fa-search"></span></span>
         <input
           type="text"
-          id="locationSearch"
+          id="location"
+          name="location"
           class="form-control"
           placeholder="Ort eingeben (z.B. München, Berlin, Hamburg...)"
+          [(ngModel)]="formData().searchCitiy"
         />
-        <button class="btn btn-success" type="button" id="searchButton">Suchen</button>
-      </div>
+        <button class="btn btn-success" type="submit">Suchen</button>
+      </form>
+
       <div class="form-text mt-2">
         Geben Sie einen Ort ein, um Wetterdaten für diese Location zu erhalten
       </div>
